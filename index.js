@@ -1,6 +1,6 @@
-const { response } = require("express");
-const express = require("express");
-const { request } = require("http");
+import express from "express";
+import { MongoClient } from 'mongodb';
+// import mongodb from "mongodb";
 const app=express();
 const PORT=5000;
 const users=[
@@ -102,10 +102,20 @@ const users=[
       "quotes": "If life were predictable it would cease to be life, and be without flavor."
     }
   ]
-  
+ 
+  const MONGO_URL="mongodb://localhost";
+  async function createConnection(){
+    const client=new MongoClient(MONGO_URL);
+    await client.connect();
+    console.log("Mongodb connected succcesfully");
+    return client;
+  }
+  const client = await createConnection();
+
+
 app.get("/",(request,response)=>{
     response.send("HeY Welcome you all to users Palace🏛🏛😍👩‍👩‍👧‍👦👨‍👧‍👧👨🏽‍🤝‍👨🏽🤩");
-})
+});
 
 
 app.get("/users",(request,response)=>{
@@ -130,10 +140,14 @@ app.get("/users",(request,response)=>{
 });
 
 
-app.get("/users/:id",(request,response)=>{
+app.get("/users/:id",async(request,response)=>{
     console.log(request.params);
     const  {id}=request.params;
-    const user = users.find((ur)=> ur.id===id);
+    // const user = users.find((ur)=> ur.id===id);
+    const user= await client
+    .db("users")
+    .collection("users")
+    .findOne({id:id});
     console.log(user);
     user
     ?response.send(user)
@@ -143,3 +157,5 @@ app.get("/users/:id",(request,response)=>{
 
 
 app.listen(PORT,()=>console.log("App is started in",PORT))
+
+
