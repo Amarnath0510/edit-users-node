@@ -125,7 +125,7 @@ const users = [
   },
 ];
 // const MONGO_URL = "mongodb://localhost";
-const MONGO_URL= "mongodb+srv://amarnath111:amarnathmongo@cluster0.7zd6g.mongodb.net";
+
 
 
 
