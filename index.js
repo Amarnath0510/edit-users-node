@@ -2,8 +2,10 @@ import express from "express";
 
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
+import { getAllUsers, getUserById, deleteUserById, createUsers, updateUserById } from "./helper.js";
+import {usersRouter} from "./routes/users.js ";
 dotenv.config();
-console.log(process.env);
+
 const app = express();
 const PORT = 5000;
 app.use(express.json());
@@ -125,7 +127,7 @@ const users = [
       "If life were predictable it would cease to be life, and be without flavor.",
   },
 ];
-// const MONGO_URL = "mongodb://localhost";
+// const MONGO_URL = "mongodb://localhost"; 
 const MONGO_URL= process.env.MONGO_URL;
 
 
@@ -137,109 +139,15 @@ async function createConnection() {
   console.log("Mongodb connected succcesfully");
   return client;
 }
-const client = await createConnection();
+export const client = await createConnection();
 
 app.get("/", (request, response) => {
   response.send("HeY Welcome you all to users Palace🏛🏛😍👩‍👩‍👧‍👦👨‍👧‍👧👨🏽‍🤝‍👨🏽🤩");
 });
+app.use("/users",usersRouter)  
 
-app.get("/users",async (request, response) => {
-  console.log(request.query);
-  const filter=request.query;
-  console.log(filter);
-  // const { name, profession, place, quotes } = request.query;
-  const filterUsers= await getAllUsers(filter);
-  // console.log(name, profession, place);
-  // let filterUsers = users;
-  // if (name) {
-  //   filterUsers = filterUsers.filter((ur) => ur.name === name);
-  // }
-  // if (profession) {
-  //   filterUsers = filterUsers.filter((ur) => ur.profession === profession);
-  // }
-  // if (place) {
-  //   filterUsers = filterUsers.filter((ur) => ur.place === place);
-  // }
-
-  // if (quotes) {
-  //   filterUsers = filterUsers.filter((ur) => ur.quotes === quotes);
-  // }
-  response.send(filterUsers);
-});
-
-app.get("/users/:id", async (request, response) => {
-  console.log(request.params);
-  const { id } = request.params;
-  // const user = users.find((ur)=> ur.id===id);
-  const user = await getUserById(id);
-  console.log(user);
-  user
-    ? response.send(user)
-    : response.status(404).send({ messasge: "No matchung user found" });
-});
-
-app.delete("/users/:id", async (request, response) => {
-  console.log(request.params);
-  const { id } = request.params;
-  // const user = users.find((ur)=> ur.id===id);
-  const result= await deleteUserById(id);
-  result.deletedCount>0
-    ? response.send(result)
-    : response.status(404).send({ messasge: "No matchung user found" });
-});
-
-
-app.post("/users",async(request,response)=>{
-  const data=request.body;
-  const result=await createUsers(data)
-
-
-  response.send(result);
-})
-
-app.put("/users/:id",async(request,response)=>{
-   console.log(request.params);
-   const {id}=request.params;
-   const data=request.body;
-   const result=await updateUserById(id, data);
-   response.send(result);
-})
 
 app.listen(PORT, () => console.log("App is started in", PORT));
 
 
-async function updateUserById(id, data) {
-  return await client
-    .db("users")
-    .collection("users")
-    .updateOne({ id: id }, { $set: data });
-}
-
-async function createUsers(data) {
-  return await client
-    .db("users")
-    .collection("users")
-    .insertMany(data);
-}
-
-async function getAllUsers(filter) {
-  return await client
-    .db("users")
-    .collection("users")
-    .find(filter)
-    .toArray();
-}
-
-async function deleteUserById(id) {
-  return await client
-    .db("users")
-    .collection("users")
-    .deleteOne({ id: id });
-}
-
-async function getUserById(id) {
-  return await client.db("users")
-    .collection("users")
-    .findOne({ id: id });
-}
 
