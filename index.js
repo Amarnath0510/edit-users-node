@@ -1,4 +1,6 @@
 import express from "express";
+// import { response } from "express";
+// import res from "express/lib/response";
 import { MongoClient } from "mongodb";
 // import mongodb from "mongodb";
 const app = express();
@@ -122,7 +124,11 @@ const users = [
       "If life were predictable it would cease to be life, and be without flavor.",
   },
 ];
-const MONGO_URL = "mongodb://localhost";
+// const MONGO_URL = "mongodb://localhost";
+const MONGO_URL= "mongodb+srv://amarnath111:amarnathmongo@cluster0.7zd6g.mongodb.net";
+
+
+
 async function createConnection() {
   const client = new MongoClient(MONGO_URL);
   await client.connect();
@@ -168,6 +174,17 @@ app.get("/users/:id", async (request, response) => {
   const { id } = request.params;
   // const user = users.find((ur)=> ur.id===id);
   const user = await client.db("users").collection("users").findOne({ id: id });
+  console.log(user);
+  user
+    ? response.send(user)
+    : response.status(404).send({ messasge: "No matchung user found" });
+});
+
+app.delete("/users/:id", async (request, response) => {
+  console.log(request.params);
+  const { id } = request.params;
+  // const user = users.find((ur)=> ur.id===id);
+  const user = await client.db("users").collection("users").deleteOne({ id: id });
   console.log(user);
   user
     ? response.send(user)
