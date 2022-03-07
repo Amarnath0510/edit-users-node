@@ -142,7 +142,7 @@ async function createConnection() {
 export const client = await createConnection();
 
 app.get("/", (request, response) => {
-  response.send("HeY Welcome you all to users Palace🏛🏛😍👩‍👩‍👧‍👦👨‍👧‍👧👨🏽‍🤝‍👨🏽🤩");
+  response.send("HeY Welcome you all to user's Palace🏛🏛😍👩‍👩‍👧‍👦👨‍👧‍👧👨🏽‍🤝‍👨🏽🤩");
 });
 app.use("/users",usersRouter)  
 
