@@ -6,7 +6,7 @@ import { client } from "./index.js";
   return await client
     .db("users")
     .collection("users")
-    .updateOne({ id: ObjectId(id )}, { $set: data });
+    .updateOne({ _id: ObjectId(id )}, { $set: data });
 }
  async function createUsers(data) {
   return await client
