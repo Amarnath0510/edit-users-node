@@ -7,7 +7,7 @@ import {usersRouter} from "./routes/users.js ";
 dotenv.config();
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT;
 app.use(express.json());
 const users = [
   {
@@ -127,7 +127,7 @@ const users = [
       "If life were predictable it would cease to be life, and be without flavor.",
   },
 ];
-// const MONGO_URL = "mongodb://localhost"; 
+// const MONGO_URL = "mongodb://localhost";  
 const MONGO_URL= process.env.MONGO_URL;
 
 
