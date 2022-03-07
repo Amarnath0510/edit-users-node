@@ -1,8 +1,9 @@
 import express from "express";
-// import { response } from "express";
-// import res from "express/lib/response";
+
 import { MongoClient } from "mongodb";
-// import mongodb from "mongodb";
+import dotenv from "dotenv";
+dotenv.config();
+console.log(process.env);
 const app = express();
 const PORT = 5000;
 app.use(express.json());
@@ -125,6 +126,7 @@ const users = [
   },
 ];
 // const MONGO_URL = "mongodb://localhost";
+const MONGO_URL= process.env.MONGO_URL;
 
 
 
@@ -146,11 +148,7 @@ app.get("/users",async (request, response) => {
   const filter=request.query;
   console.log(filter);
   // const { name, profession, place, quotes } = request.query;
-  const filterUsers= await client
-  .db("users")
-  .collection("users")
-  .find(filter)
-  .toArray();
+  const filterUsers= await getAllUsers(filter);
   // console.log(name, profession, place);
   // let filterUsers = users;
   // if (name) {
@@ -173,7 +171,7 @@ app.get("/users/:id", async (request, response) => {
   console.log(request.params);
   const { id } = request.params;
   // const user = users.find((ur)=> ur.id===id);
-  const user = await client.db("users").collection("users").findOne({ id: id });
+  const user = await getUserById(id);
   console.log(user);
   user
     ? response.send(user)
@@ -184,23 +182,64 @@ app.delete("/users/:id", async (request, response) => {
   console.log(request.params);
   const { id } = request.params;
   // const user = users.find((ur)=> ur.id===id);
-  const user = await client.db("users").collection("users").deleteOne({ id: id });
-  console.log(user);
-  user
-    ? response.send(user)
+  const result= await deleteUserById(id);
+  result.deletedCount>0
+    ? response.send(result)
     : response.status(404).send({ messasge: "No matchung user found" });
 });
 
 
 app.post("/users",async(request,response)=>{
   const data=request.body;
-  const result=await client
-  .db("users")
-  .collection("users")
-  .insertMany(data)
+  const result=await createUsers(data)
+
 
   response.send(result);
 })
+
+app.put("/users/:id",async(request,response)=>{
+   console.log(request.params);
+   const {id}=request.params;
+   const data=request.body;
+   const result=await updateUserById(id, data);
+   response.send(result);
+})
+
 app.listen(PORT, () => console.log("App is started in", PORT));
 
+
+async function updateUserById(id, data) {
+  return await client
+    .db("users")
+    .collection("users")
+    .updateOne({ id: id }, { $set: data });
+}
+
+async function createUsers(data) {
+  return await client
+    .db("users")
+    .collection("users")
+    .insertMany(data);
+}
+
+async function getAllUsers(filter) {
+  return await client
+    .db("users")
+    .collection("users")
+    .find(filter)
+    .toArray();
+}
+
+async function deleteUserById(id) {
+  return await client
+    .db("users")
+    .collection("users")
+    .deleteOne({ id: id });
+}
+
+async function getUserById(id) {
+  return await client.db("users")
+    .collection("users")
+    .findOne({ id: id });
+}
 
