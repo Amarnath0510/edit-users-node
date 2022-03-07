@@ -7,7 +7,9 @@ import{
     updateUserById,
     } from "../helper.js";
 const router=express.Router();
-router.get("/",async (request, response) => {
+router
+.route("/")
+.get(async (request, response) => {
     console.log(request.query);
     const filter=request.query;
     console.log(filter);
@@ -15,9 +17,19 @@ router.get("/",async (request, response) => {
     const filterUsers= await getAllUsers(filter);
   
     response.send(filterUsers);
-  });
+  })
+ .post(async(request,response)=>{
+    const data=request.body;
+    const result=await createUsers(data)
   
- router.get("/:id", async (request, response) => {
+  
+    response.send(result);
+  })
+  
+router
+.route("/:id")
+
+ .get( async (request, response) => {
     console.log(request.params);
     const { id } = request.params;
     
@@ -26,9 +38,9 @@ router.get("/",async (request, response) => {
     user
       ? response.send(user)
       : response.status(404).send({ messasge: "No matchung user found" });
-  });
+  })
   
-router.delete("/:id", async (request, response) => {
+.delete(async (request, response) => {
     console.log(request.params);
     const { id } = request.params;
     
@@ -36,18 +48,12 @@ router.delete("/:id", async (request, response) => {
     result.deletedCount>0
       ? response.send(result)
       : response.status(404).send({ messasge: "No matchung user found" });
-  });
-  
-  
- router.post("/",async(request,response)=>{
-    const data=request.body;
-    const result=await createUsers(data)
-  
-  
-    response.send(result);
   })
   
-router.put("/:id",async(request,response)=>{
+  
+
+  
+.put(async(request,response)=>{
      console.log(request.params);
      const {id}=request.params;
      const data=request.body;
