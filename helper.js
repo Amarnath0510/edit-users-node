@@ -1,5 +1,5 @@
-import { ObjectId } from "mongodb";
-import { client } from "./index.js";
+import { ObjectId } from "mongodb"
+import { client } from "./index.js"
 
 
  async function updateUserById(id, data) {
