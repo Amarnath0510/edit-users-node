@@ -7,7 +7,7 @@ import { getAllUsers, getUserById, deleteUserById, createUsers, updateUserById }
 import {usersRouter} from "./routes/users.js ";
 dotenv.config();
 
-const app = express();
+const app = express()
 const PORT = process.env.PORT;
 app.use(cors());
 app.use(express.json());
